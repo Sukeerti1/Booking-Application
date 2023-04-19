@@ -6,10 +6,11 @@ import {
   TextInput,
   View,
   Button,
-  Image,
+  Alert
 } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute} from "@react-navigation/native";
+import { Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "../components/Header";
 import { Feather } from "@expo/vector-icons";
@@ -25,11 +26,14 @@ import {
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const route=useRoute();
   const [selectedDates, setSelectedDates] = useState();
   const [rooms, setRooms] = useState(1);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalvisible, setModalVisible] = useState(false);
+
+  console.log("Routes",route.params)
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
@@ -41,7 +45,7 @@ const HomeScreen = () => {
       },
       headerStyle: {
         backgroundColor: "#003580",
-        height: 90,
+        height: 110,
         borderBottomColor: "transparent",
         shadowColor: "transparent",
       },
@@ -69,7 +73,35 @@ const HomeScreen = () => {
       />
     );
   };
+const searchPlaces=(place)=>{
+  if(!route.params || !selectedDates){
+  Alert.alert(
+    'Invalid details', 
+    'Please enter all the details', 
+    [
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+    {text: 'OK', onPress: () => console.log('OK Pressed')},
+  ]);
+}
+if(route.params
+ // && selectedDates
+  )
+{
+  navigation.navigate("Places",{
+    rooms:rooms,
+    adults:adults,
+    children:children,
+    selectedDates:selectedDates,
+    place:place
+  })
 
+}
+
+}
   return (
     <>
       <View>
@@ -87,6 +119,7 @@ const HomeScreen = () => {
           >
             {/* Destination */}
             <Pressable
+            onPress={()=>navigation.navigate("Search")}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -98,10 +131,7 @@ const HomeScreen = () => {
               }}
             >
               <Feather name="search" size={24} color="black" />
-              <TextInput
-                placeholderTextColor="black"
-                placeholder="Enter your Destination"
-              />
+              <TextInput placeholder={route.params ? route.params.input : "Enter Your Destination"} />
             </Pressable>
 
             {/* Selected Dates */}
@@ -150,13 +180,12 @@ const HomeScreen = () => {
                   allowFontScaling={false}
                   placeholder={"Select Your Dates"}
                   mode={"range"}
-                />  */}
-              <TextInput placeholder="Apr25,2018 - Apr28,2018" />
+                /> */}
+              <TextInput placeholder="Apr25,2018-Apr28,2018" />
             </Pressable>
 
             {/* Rooms and Guests */}
             <Pressable
-              onPress={() => setModalVisible(!modalVisible)}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -166,16 +195,19 @@ const HomeScreen = () => {
                 borderWidth: 2,
                 paddingVertical: 15,
               }}
+              onPress={() => setModalVisible(!modalvisible)}
             >
               <Ionicons name="person-outline" size={24} color="black" />
               <TextInput
                 placeholderTextColor="red"
-                placeholder={` ${rooms} rooms + ${adults} adults + ${children} Children`}
+                style={{ width: "100%" }}
+                placeholder={` ${rooms} room +  ${adults} adults +  ${children} children `}
               />
             </Pressable>
 
             {/* Search Button */}
-            <Pressable
+            <Pressable 
+            onPress={()=>searchPlaces(route?.params.input)}
               style={{
                 paddingHorizontal: 10,
                 borderColor: "#ffc72c",
@@ -196,7 +228,6 @@ const HomeScreen = () => {
               </Text>
             </Pressable>
           </View>
-
           <Text
             style={{ marginHorizontal: 20, fontSize: 17, fontWeight: "500" }}
           >
@@ -207,11 +238,11 @@ const HomeScreen = () => {
               style={{
                 width: 200,
                 height: 150,
-                marginTop: 10,
                 backgroundColor: "#003580",
                 borderRadius: 10,
+                marginTop: 10,
+                marginLeft: 20,
                 padding: 20,
-                marginHorizontal: 20,
               }}
             >
               <Text
@@ -225,19 +256,20 @@ const HomeScreen = () => {
                 Genius
               </Text>
               <Text style={{ color: "white", fontSize: 15, fontWeight: "500" }}>
-                You are at genius level one in your honesty
+                you are genious level are in our loyalty program
               </Text>
             </Pressable>
-
             <Pressable
               style={{
                 width: 200,
                 height: 150,
-                marginTop: 10,
-                borderWidth: 2,
+                backgroundColor: "#E0E0E0",
                 borderRadius: 10,
+                marginTop: 10,
+                marginLeft: 20,
                 padding: 20,
-                marginHorizontal: 20,
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <Text
@@ -247,61 +279,62 @@ const HomeScreen = () => {
                   marginVertical: 7,
                 }}
               >
-                10% Discounts
+                15% discounts
+              </Text>
+              <Text style={{ fontSize: 15, fontWeight: "500" }}>
+                Complete 5 stays to unlock level 2
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={{
+                width: 200,
+                height: 150,
+                backgroundColor: "#E0E0E0",
+                borderRadius: 10,
+                marginTop: 10,
+                marginLeft: 20,
+                padding: 20,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  marginVertical: 7,
+                }}
+              >
+                10% Discount
               </Text>
               <Text style={{ fontSize: 15, fontWeight: "500" }}>
                 Enjoy Discounts at participating at properties worldwide
               </Text>
             </Pressable>
-
-            <Pressable
-              style={{
-                width: 200,
-                height: 150,
-                marginTop: 10,
-                borderWidth: 2,
-                borderRadius: 10,
-                padding: 20,
-                marginHorizontal: 20,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  marginVertical: 7,
-                }}
-              >
-                15% Discount
-              </Text>
-              <Text style={{ fontSize: 15, fontWeight: "500" }}>
-                Complete 5 stays to unlock level 2
-              </Text>
-            </Pressable>  
           </ScrollView>
-
           <Pressable
-          style={{
-            marginTop: 40,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
+            style={{
+              marginTop: 40,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: 'gray',
+              width: 400,
+              height: 100
+            }}
           >
             <Image
-            style={{width: 300, height: 60, resizeMode: 'cover', backgroundColor: 'gray'}}
-            source={{
-              uri: 
-              //"https://picsum.photos/seed/picsum/200/300",
-             "https://assets.stickpng.com/thumbs/5a32a821cb9a85480a628f8f.png",
-            }}
+              style={{ width: 350, height: 90, resizeMode: "cover" }}
+              source={{
+                uri: "https://assets.stickpng.com/thumbs/5a32a821cb9a85480a628f8f.png",
+              }}
             />
           </Pressable>
         </ScrollView>
       </View>
-
       <BottomModal
         swipeThreshold={200}
-        onBackdropPress={() => setModalVisible(!modalVisible)}
+        onBackdropPress={() => setModalVisible(!modalvisible)}
         swipeDirection={["up", "down"]}
         footer={
           <ModalFooter>
@@ -312,19 +345,19 @@ const HomeScreen = () => {
                 color: "white",
                 backgroundColor: "#003580",
               }}
-              onPress={() => setModalVisible(!modalVisible)}
+              onPress={() => setModalVisible(!modalvisible)}
             />
           </ModalFooter>
         }
-        modalTitle={<ModalTitle title="Select rooms and guests" />}
+        modalTitle={<ModalTitle title="Select Rooms and Guests" />}
         modalAnimation={
           new SlideAnimation({
             slideFrom: "bottom",
           })
         }
-        onHardwareBackPress={() => setModalVisible(!modalVisible)}
-        visible={modalVisible}
-        onTouchOutside={() => setModalVisible(!modalVisible)}
+        onHardwareBackPress={() => setModalVisible(!modalvisible)}
+        visible={modalvisible}
+        onTouchOutside={() => setModalVisible(!modalvisible)}
       >
         <ModalContent style={{ width: "100%", height: 310 }}>
           <View
@@ -335,24 +368,19 @@ const HomeScreen = () => {
               marginVertical: 15,
             }}
           >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-              }}
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Rooms</Text>
+            <Pressable
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
             >
-              Rooms
-            </Text>
-            <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
               <Pressable
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 13,
+                  borderColor: "#BEBEBE",
+                  backgroundColor: "#E0E0E0",
+                }}
                 onPress={() => setRooms(Math.max(1, rooms - 1))}
-                style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 13,
-                  borderColor: "bebebe",
-                  backgroundColor: "#e0e0e0",
-                }}
               >
                 <Text
                   style={{
@@ -365,29 +393,16 @@ const HomeScreen = () => {
                   -
                 </Text>
               </Pressable>
-
-              <Pressable>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: 18,
-                    fontWeight: "500",
-                    paddingHorizontal: 6,
-                  }}
-                >
-                  {rooms}
-                </Text>
-              </Pressable>
-
+              <Pressable>{rooms}</Pressable>
               <Pressable
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 13,
+                  borderColor: "#BEBEBE",
+                  backgroundColor: "#E0E0E0",
+                }}
                 onPress={() => setRooms((c) => c + 1)}
-                style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 13,
-                  borderColor: "bebebe",
-                  backgroundColor: "#e0e0e0",
-                }}
               >
                 <Text
                   style={{
@@ -402,7 +417,6 @@ const HomeScreen = () => {
               </Pressable>
             </Pressable>
           </View>
-
           <View
             style={{
               flexDirection: "row",
@@ -411,24 +425,19 @@ const HomeScreen = () => {
               marginVertical: 15,
             }}
           >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-              }}
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Adults</Text>
+            <Pressable
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
             >
-              Adults
-            </Text>
-            <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
               <Pressable
-                onPress={() => setAdults(Math.max(1, adults - 1))}
                 style={{
                   width: 26,
                   height: 26,
                   borderRadius: 13,
-                  borderColor: "bebebe",
-                  backgroundColor: "#e0e0e0",
+                  borderColor: "#BEBEBE",
+                  backgroundColor: "#E0E0E0",
                 }}
+                onPress={() => setAdults(Math.max(0, adults - 1))}
               >
                 <Text
                   style={{
@@ -441,29 +450,16 @@ const HomeScreen = () => {
                   -
                 </Text>
               </Pressable>
-
-              <Pressable>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: 18,
-                    fontWeight: "500",
-                    paddingHorizontal: 6,
-                  }}
-                >
-                  {adults}
-                </Text>
-              </Pressable>
-
+              <Pressable>{adults}</Pressable>
               <Pressable
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 13,
+                  borderColor: "#BEBEBE",
+                  backgroundColor: "#E0E0E0",
+                }}
                 onPress={() => setAdults((c) => c + 1)}
-                style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 13,
-                  borderColor: "bebebe",
-                  backgroundColor: "#e0e0e0",
-                }}
               >
                 <Text
                   style={{
@@ -478,7 +474,6 @@ const HomeScreen = () => {
               </Pressable>
             </Pressable>
           </View>
-
           <View
             style={{
               flexDirection: "row",
@@ -487,24 +482,19 @@ const HomeScreen = () => {
               marginVertical: 15,
             }}
           >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-              }}
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>Children</Text>
+            <Pressable
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
             >
-              Children
-            </Text>
-            <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
               <Pressable
-                onPress={() => setChildren(Math.max(0, children - 1))}
                 style={{
                   width: 26,
                   height: 26,
                   borderRadius: 13,
-                  borderColor: "bebebe",
-                  backgroundColor: "#e0e0e0",
+                  borderColor: "#BEBEBE",
+                  backgroundColor: "#E0E0E0",
                 }}
+                onPress={() => setChildren(Math.max(1, children - 1))}
               >
                 <Text
                   style={{
@@ -517,29 +507,16 @@ const HomeScreen = () => {
                   -
                 </Text>
               </Pressable>
-
-              <Pressable>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: 18,
-                    fontWeight: "500",
-                    paddingHorizontal: 6,
-                  }}
-                >
-                  {children}
-                </Text>
-              </Pressable>
-
+              <Pressable>{children}</Pressable>
               <Pressable
-                onPress={() => setChildren((c) => c + 1)}
                 style={{
                   width: 26,
                   height: 26,
                   borderRadius: 13,
-                  borderColor: "bebebe",
-                  backgroundColor: "#e0e0e0",
+                  borderColor: "#BEBEBE",
+                  backgroundColor: "#E0E0E0",
                 }}
+                onPress={() => setChildren((c) => c + 1)}
               >
                 <Text
                   style={{

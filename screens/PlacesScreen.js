@@ -6,7 +6,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
 import PropertyCard from "../components/PropertyCard";
-import { Entypo } from '@expo/vector-icons';
+import { Entypo } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import {
   BottomModal,
   ModalContent,
@@ -480,6 +481,7 @@ const PlacesScreen = () => {
   ];
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState([]);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
@@ -507,9 +509,48 @@ const PlacesScreen = () => {
       id: "1",
       filter: "cost:High to Low",
     },
-  ]
+  ];
 
-  console.log(route.params);
+  const searchPlaces = data?.filter(
+    (item) => item.place === route.params.place
+  );
+  const [sortedData, setSortedData] = useState(data);
+  console.log(searchPlaces);
+
+  const compare = (a, b) => {
+    if (a.newPrice > b.newPrice) {
+      return -1;
+    }
+    if (a.newPrice < b.newPrice) {
+      return 1;
+    }
+    return 0;
+  };
+  const comparison = (a, b) => {
+    if (a.newPrice < b.newPrice) {
+      return -1;
+    }
+    if (a.newPrice > b.newPrice) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const applyFilter = (filter) => {
+    setModalVisible(false);
+    switch (filter) {
+      case "cost:High to Low":
+        searchPlaces.map((val) => val.properties.sort(compare));
+        setSortedData(searchPlaces);
+        break;
+      case "cost:Low to High":
+        searchPlaces.map((val) => val.properties.sort(comparison));
+        setSortedData(searchPlaces);
+        break;
+    }
+  };
+
+  //console.log(route.params);
   return (
     <View>
       <Pressable
@@ -539,7 +580,14 @@ const PlacesScreen = () => {
           </Text>
         </Pressable>
 
-        <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
+        <Pressable
+          onPress={() =>
+            navigation.navigate("Map", {
+              searchResults: searchPlaces,
+            })
+          }
+          style={{ flexDirection: "row", alignItems: "center" }}
+        >
           <FontAwesome5 name="map-marker-alt" size={22} color="gray" />
           <Text style={{ fontSize: 15, fontWeight: "500", marginLeft: 8 }}>
             Map
@@ -548,7 +596,7 @@ const PlacesScreen = () => {
       </Pressable>
 
       <ScrollView style={{ backgroundColor: "#f5f5f5" }}>
-        {data
+        {sortedData
           ?.filter((item) => item.place === route.params.place)
           .map((item) =>
             item.properties.map((property, index) => (
@@ -572,11 +620,13 @@ const PlacesScreen = () => {
         footer={
           <ModalFooter>
             <Pressable
+              onPress={() => applyFilter(selectedFilter)}
               style={{
                 paddingRight: 10,
                 marginLeft: "auto",
                 marginRight: "auto",
                 marginVertical: 10,
+                marginBottom: 20,
               }}
             >
               <Text>Apply</Text>
@@ -594,15 +644,40 @@ const PlacesScreen = () => {
         onTouchOutside={() => setModalVisible(!modalVisible)}
       >
         <ModalContent style={{ width: "100%", height: 300 }}>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{marginVertical: 10, flex: 2, height: 280, borderRightWidth: 1, borderColor: '#e0e0e0' }}>
-              <Text style={{textAlign: "center"}}>Sort</Text>
+          <View style={{ flexDirection: "row" }}>
+            <View
+              style={{
+                marginVertical: 10,
+                flex: 2,
+                height: 280,
+                borderRightWidth: 1,
+                borderColor: "#e0e0e0",
+              }}
+            >
+              <Text style={{ textAlign: "center" }}>Sort</Text>
             </View>
-            <View style={{flex: 3, margin: 10}}>
-              {filters.map((filter, index) => (
-                <Pressable style={{flexDirection: "row", alignItems: "center", marginVertical: 10}} key={index}>
-                   <Entypo name="circle" size={18} color="black" />
-                   <Text style={{fontSize: 16, fontWeight: "500", marginLeft: 6 }}>{filter.filter}</Text>
+            <View style={{ flex: 3, margin: 10 }}>
+              {filters.map((item, index) => (
+                <Pressable
+                  onPress={() => setSelectedFilter(item.filter)}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: 10,
+                  }}
+                  key={index}
+                >
+                  {selectedFilter.includes(item.filter) ? (
+                    <FontAwesome name="circle" size={18} color="green" />
+                  ) : (
+                    <Entypo name="circle" size={18} color="black" />
+                  )}
+
+                  <Text
+                    style={{ fontSize: 16, fontWeight: "500", marginLeft: 6 }}
+                  >
+                    {item.filter}
+                  </Text>
                 </Pressable>
               ))}
             </View>

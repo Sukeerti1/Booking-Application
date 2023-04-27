@@ -9,6 +9,7 @@ import {
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const PropertyCard = ({
   rooms,
@@ -19,9 +20,22 @@ const PropertyCard = ({
   availableRooms,
 }) => {
   const { width, height } = Dimensions.get("window");
+  const navigation = useNavigation()
   return (
     <View>
       <Pressable
+      onPress={() => navigation.navigate("Info", {
+        name: property.name,
+        rating: property.rating,
+        oldPrice: property.oldPrice,
+        newPrice: property.newPrice,
+        photos: property.photos,
+        rooms: property.rooms,
+        adults: adults,
+        children: children,
+        rooms: rooms,
+        selectedDates: selectedDates,
+      })}
         style={{ margin: 15, flexDirection: "row", backgroundColor: "white" }}
       >
         <View>
@@ -92,24 +106,40 @@ const PropertyCard = ({
               gap: 8,
             }}
           >
-            <Text style={{color: 'red', fontSize: 18, textDecorationLine: "line-through" }}>Rs {property.oldPrice * adults}</Text>
-            <Text style={{ fontSize: 18,  }}>Rs {property.newPrice * adults}</Text>
+            <Text
+              style={{
+                color: "red",
+                fontSize: 18,
+                textDecorationLine: "line-through",
+              }}
+            >
+              Rs {property.oldPrice * adults}
+            </Text>
+            <Text style={{ fontSize: 18 }}>
+              Rs {property.newPrice * adults}
+            </Text>
           </View>
 
-          <View style={{marginTop: 6}}>
-            <Text style={{fontSize: 13, color: 'gray'}}>Deluxe Room</Text>
-            <Text style={{fontSize: 13, color: 'gray'}}>Hotel Room : 1 bed</Text>
+          <View style={{ marginTop: 6 }}>
+            <Text style={{ fontSize: 13, color: "gray" }}>Deluxe Room</Text>
+            <Text style={{ fontSize: 13, color: "gray" }}>
+              Hotel Room : 1 bed
+            </Text>
           </View>
 
-          <View style={{
-            backgroundColor: '#6082b6',
-            paddingVertical: 2,
-            borderRadius: 5,
-            marginTop: 2,
-            width: 150,
-            paddingHorizontal: 3
-          }}>
-            <Text style={{textAlign: 'center', color: 'white', }}>Limited Time Deal</Text>
+          <View
+            style={{
+              backgroundColor: "#6082b6",
+              paddingVertical: 2,
+              borderRadius: 5,
+              marginTop: 2,
+              width: 150,
+              paddingHorizontal: 3,
+            }}
+          >
+            <Text style={{ textAlign: "center", color: "white" }}>
+              Limited Time Deal
+            </Text>
           </View>
         </View>
       </Pressable>

@@ -22,7 +22,7 @@ import {
   ModalTitle,
   SlideAnimation,
 } from "react-native-modals";
-//import DatePicker from "react-native-date-ranges";
+import DatePicker from "react-native-date-ranges";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -88,7 +88,7 @@ const searchPlaces=(place)=>{
   ]);
 }
 if(route.params
- // && selectedDates
+  && selectedDates
   )
 {
   navigation.navigate("Places",{
@@ -147,7 +147,7 @@ if(route.params
               }}
             >
               <Feather name="calendar" size={24} color="black" />
-              {/* <DatePicker
+              <DatePicker
                   style={{
                     width: 350,
                     height: 30,
@@ -180,8 +180,8 @@ if(route.params
                   allowFontScaling={false}
                   placeholder={"Select Your Dates"}
                   mode={"range"}
-                /> */}
-              <TextInput placeholder="Apr25,2018-Apr28,2018" />
+                />
+              {/* <TextInput placeholder="Apr25,2018-Apr28,2018" /> */}
             </Pressable>
 
             {/* Rooms and Guests */}
@@ -318,7 +318,6 @@ if(route.params
               marginTop: 40,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: 'gray',
               width: 400,
               height: 100
             }}
